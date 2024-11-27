@@ -111,9 +111,9 @@ def calculate_c1(solution, *args, **kwargs):
     #dataset = kwargs['dataset']
     # Calcula la cantidad de asignaturas que se imparten en mismas franjas horarias
     error_counter = 0
-    for i in range(solution)
-      for j in range(solution[0])
-        if solution[i][j].contains("/")
+    for i in range(solution):
+      for j in range(solution[0]):
+        if solution[i][j].contains("/"):
           error_counter += 1
 
     return error_counter
