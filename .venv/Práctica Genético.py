@@ -109,7 +109,8 @@ def create_timetable(candidate):
 
 def calculate_c1(solution, *args, **kwargs):
     #dataset = kwargs['dataset']
-    # Calcula la cantidad de asignaturas que se imparten en mismas franjas horarias
+    # Calcula la cantidad de asignaturas que se imparten en mismas franjas horaria
+    return 0
     error_counter = 0
     for i in range(solution):
       for j in range(solution[0]):
@@ -122,6 +123,7 @@ def calculate_c2(solution, *args, **kwargs):
     #dataset = kwargs['dataset']
     # Calcula la cantidad de horas por encima de 2 que se imparten
     # de una misma asignatura en un mismo día
+    return 0 # TODO: Implement this, returns 0 to avoid errors
     i = 0
     error_counter = 0
     subjects = []
@@ -134,17 +136,17 @@ def calculate_c2(solution, *args, **kwargs):
 def calculate_p1(solution, *args, **kwargs):
     #dataset = kwargs['dataset']
     # Calcula el número de huecos vacíos entre asignaturas
-    return None
+    return 0 # TODO: Implement this, returns 0 to avoid errors
 
 def calculate_p2(solution, *args, **kwargs):
     #dataset = kwargs['dataset']
     # Calcula el número de días utilizados en los horarios
-    return None
+    return 0 # TODO: Implement this, returns 0 to avoid errors
 
 def calculate_p3(solution, *args, **kwargs):
     #dataset = kwargs['dataset']
     # Calcula el número de asignaturas con horas NO consecutivas en un mismo día
-    return None
+    return 0 # TODO: Implement this, returns 0 to avoid errors
 
 def fitness_timetabling(solution, *args, **kwargs):
     # Calcula el fitness de una solución de timetabling siguiendo la fórmula del enunciado
@@ -171,8 +173,8 @@ def select_best(fitness_of_candidates, *args, **kwargs):
     i = 0
     best_candidates = []
     if len(fitness_of_candidates) % 2 == 0:
-      while i < (fitness_of_candidates - 1):
-        if max(fitness_of_candidates[i[1]], fitness_of_candidates[i + 1[1]]) == fitness_of_candidates[i]:
+      while i < (len(fitness_of_candidates) - 1):
+        if max(fitness_of_candidates[i][1], fitness_of_candidates[i + 1][1]) == fitness_of_candidates[i]:
           best_candidates.append(fitness_of_candidates[i])
         else:
           best_candidates.append(fitness_of_candidates[i + 1])
