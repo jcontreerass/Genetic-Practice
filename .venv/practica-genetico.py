@@ -98,19 +98,36 @@ def calculate_c1(solution, *args, **kwargs):
     return cont
 
 def calculate_c2(solution, *args, **kwargs):
-    #dataset = kwargs['dataset']
+    # dataset = kwargs['dataset']
     # Calcula la cantidad de horas por encima de 2 que se imparten
     # de una misma asignatura en un mismo día
+    # Dividir entre 3 y ver que numeros son iguales
 
+    # solution = [0 6 8 2 3 5]
+    # aux = [0 2 2 0 1 1]
+    aux = [0] * len(solution)
+    counter = 0
     courses = dataset['courses']
-    course = 0
 
-    for course in range(len(courses)):
-      while courses[course][1] <= 2:
-        course += 1
 
-    i = courses[course][1] - 1
-    counter  = 0
+
+    for i in range(len(solution)):
+        aux[i] = solution[i] // dataset['n_days']
+
+    #print(aux)
+
+    i = 0
+    array = [0] * 3
+
+    for course in courses:
+        for _ in range(course[1]):
+            #print(_)
+            array[aux[i]] += 1
+            i += 1
+            #print(array)
+            counter = sum(1 if array[i] > 2 else 0 for i in range(_))
+
+    return counter
 
 def calculate_p1(solution, *args, **kwargs):
     #dataset = kwargs['dataset']

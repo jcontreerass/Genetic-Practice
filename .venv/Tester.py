@@ -60,28 +60,49 @@ print(my_other_list)
 """
 
 
-import pandas as pd
 
-list = [1, 1, 2, 3, 4, 5, 6]
+list = [0, 6, 8, 5, 3, 4]
 
 
-def calculate_c1(solution, *args, **kwargs):
+dataset = {"n_courses" : 3,
+           "n_days" : 3,
+           "n_hours_day" : 3,
+           "courses" : [("IA", 1), ("ALG", 2), ("BD", 3)]}
+
+def calculate_c2(solution, *args, **kwargs):
     # dataset = kwargs['dataset']
-    # Calcula la cantidad de asignaturas que se imparten en mismas franjas horarias
-    cont = 0
-    # Convertir a una Serie de Pandas
-    series = pd.Series(arr)
+    # Calcula la cantidad de horas por encima de 2 que se imparten
+    # de una misma asignatura en un mismo día
+    # Dividir entre 3 y ver que numeros son iguales
 
-    # Contar ocurrencias
-    counts = series.value_counts()
+    # solution = [0 6 8 2 3 5]
+    # aux = [0 2 2 0 1 1]
+    aux = [0] * len(solution)
+    counter = 0
+    courses = dataset['courses']
 
-    for i in counts:
-        if i > 0:
-            cont += i - 1
 
-    return cont
 
-print(calculate_c1(list))
+    for i in range(len(solution)):
+        aux[i] = solution[i] // dataset['n_days']
+
+    #print(aux)
+
+    i = 0
+    array = [0] * 3
+
+    for course in courses:
+        for _ in range(course[1]):
+            #print(_)
+            array[aux[i]] += 1
+            i += 1
+            #print(array)
+            counter = sum(1 if array[i] > 2 else 0 for i in range(_))
+
+    return counter
+
+
+print(calculate_c2(list))
 
 
 
