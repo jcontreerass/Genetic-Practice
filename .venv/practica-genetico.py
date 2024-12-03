@@ -127,10 +127,13 @@ def calculate_p1(solution, *args, **kwargs):
     #dataset = kwargs['dataset']
     # Calcula el número de huecos vacíos entre asignaturas
     counter  = 0
+    n_days = dataset['n_days']
 
     for i in range(len(solution) - 1):
-      if (solution[i + 1] - solution[i]) == 2:
-        counter += 1
+        arr = solution.copy()
+        arr = np.sort(arr)
+        if (arr[i] // n_days == arr[i + 1] // n_days) and ((arr[i + 1] - arr[i]) == 2):
+            counter += 1
 
     return counter
 
