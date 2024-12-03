@@ -11,8 +11,6 @@ def generate_random_array_int(alphabet, length):
     # usando el alfabeto dado
     return np.random.choice(alphabet, length)
 
-
-
 def generate_initial_population_timetabling(pop_size, *args, **kwargs):
     # Dataset con la misma estructura que el ejemplo
     # Obtener el alfabeto y la longitud a partir del dataset
@@ -114,9 +112,6 @@ def calculate_c2(solution, *args, **kwargs):
     i = courses[course][1] - 1
     counter  = 0
 
-
-
-
 def calculate_p1(solution, *args, **kwargs):
     #dataset = kwargs['dataset']
     # Calcula el número de huecos vacíos entre asignaturas
@@ -127,7 +122,6 @@ def calculate_p1(solution, *args, **kwargs):
         counter += 1
 
     return counter
-
 
 def calculate_p2(solution, *args, **kwargs):
     # dataset = kwargs['dataset']
@@ -155,7 +149,6 @@ def fitness_timetabling(solution, *args, **kwargs):
     else:
       return 1 / (1 + calculate_p1(solution) + calculate_p2(solution) + calculate_p3(solution))
 
-
 # Pistas:
 # - Una función que devuelva la tabla de horarios de una solución
 # - Una función que devuelva la cantidad de horas por día de cada asignatura
@@ -180,13 +173,12 @@ def select_best(fitness_of_candidates, *args, **kwargs):
         i += 2
     return best_candidates
 
-
 def tournament_selection(population, fitness, number_parents, *args, **kwargs):
     t = []  # Tamaño del torneo
     # Selecciona number_parents individuos de la población mediante selección por torneo
 
     #Genera un numero random
-    selector = round(random.uniform(0.0, 1.0), 2)
+    selector = round(np.random.uniform(0.0, 1.0), 2)
 
     #Genera una población inicial(mas adelante se hará con population)
     initial_population = generate_initial_population_timetabling(6)
@@ -209,7 +201,6 @@ def tournament_selection(population, fitness, number_parents, *args, **kwargs):
     the_best_ones =[].append(select_best(fitness_of_candidates))
 
     return the_best_ones
-
 
 tournament_selection(generate_initial_population_timetabling, fitness_timetabling, 4)
 # Pista:
