@@ -3,24 +3,22 @@ dataset = {"n_courses" : 3,
            "n_hours_day" : 3,
            "courses" : [("IA", 1), ("ALG", 2), ("BD", 3)]}
 
-import random
+import numpy as np
+import pandas as pd
 
 def generate_random_array_int(alphabet, length):
     # Genera un array de enteros aleatorios de tamaño length
     # usando el alfabeto dado
-    rand_array = [0]*length
+    return np.random.choice(alphabet, length)
 
-    for i in range(length):
-      rand_array[i] = random.choice(alphabet)
 
-    return rand_array
 
 def generate_initial_population_timetabling(pop_size, *args, **kwargs):
     # Dataset con la misma estructura que el ejemplo
     # Obtener el alfabeto y la longitud a partir del dataset
     # Genera una población inicial de tamaño pop_size
-    length = dataset['n_days'] * dataset['n_hours_day']
-    alphabet = list(range(length))
+    alphabet_length = dataset['n_days'] * dataset['n_hours_day']
+    alphabet = list(range(alphabet_length))
     initial_population = []
 
     candidate_length = 0
@@ -34,7 +32,7 @@ def generate_initial_population_timetabling(pop_size, *args, **kwargs):
     return initial_population
 
 generate_random_array_int(list(range(9)), 6)
-print(generate_initial_population_timetabling(6))
+print(generate_initial_population_timetabling(6)[0])
 
 ################################# NO TOCAR #################################
 #                                                                          #
@@ -85,68 +83,70 @@ print_timetabling_solution(candidate, dataset)
 
 """### Función de fitness"""
 
-def create_timetable(candidate):
-    n_days = dataset['n_days']
-    n_hours_day = dataset['n_hours_day']
-    courses = dataset['courses']
-
-    # Crea una matriz de n_days x n_hours_day
-    timetable = [[[] for _ in range(n_hours_day)] for _ in range(n_days)]
-
-    # Llena la matriz con las asignaturas
-    i = 0
-    max_len = 6 # Longitud del título Día XX
-    for course in courses:
-        for _ in range(course[1]):
-            day = candidate[i] // n_hours_day
-            hour = candidate[i] % n_hours_day
-            timetable[day][hour].append(course[0])
-            i += 1
-            # Calcula la longitud máxima del nombre de las asignaturas
-            # en una misma franja horaria
-            max_len = max(max_len, len('/'.join(timetable[day][hour])))
-    return timetable
-
 def calculate_c1(solution, *args, **kwargs):
-    #dataset = kwargs['dataset']
-    # Calcula la cantidad de asignaturas que se imparten en mismas franjas horaria
-    return 0
-    error_counter = 0
-    for i in range(solution):
-      for j in range(solution[0]):
-        if solution[i][j].contains("/"):
-          error_counter += 1
+    # dataset = kwargs['dataset']
+    # Calcula la cantidad de asignaturas que se imparten en mismas franjas horarias
+    cont = 0
+    # Convertir a una Serie de Pandas
+    series = pd.Series(solution)
 
-    return error_counter
+    # Contar ocurrencias
+    counts = series.value_counts()
+
+    for i in counts:
+        if i > 0:
+            cont += (i - 1)
+
+    return cont
 
 def calculate_c2(solution, *args, **kwargs):
     #dataset = kwargs['dataset']
     # Calcula la cantidad de horas por encima de 2 que se imparten
     # de una misma asignatura en un mismo día
-    return 0 # TODO: Implement this, returns 0 to avoid errors
-    i = 0
-    error_counter = 0
-    subjects = []
-    for i in range(solution):
-      for j in range(solution):
-        solution[j][i]
 
-    return None
+    courses = dataset['courses']
+    course = 0
+
+    for course in range(len(courses)):
+      while courses[course][1] <= 2:
+        course += 1
+
+    i = courses[course][1] - 1
+    counter  = 0
+
+
+
 
 def calculate_p1(solution, *args, **kwargs):
     #dataset = kwargs['dataset']
     # Calcula el número de huecos vacíos entre asignaturas
-    return 0 # TODO: Implement this, returns 0 to avoid errors
+    counter  = 0
+
+    for i in range(len(solution) - 1):
+      if (solution[i + 1] - solution[i]) == 2:
+        counter += 1
+
+    return counter
+
 
 def calculate_p2(solution, *args, **kwargs):
-    #dataset = kwargs['dataset']
+    # dataset = kwargs['dataset']
     # Calcula el número de días utilizados en los horarios
-    return 0 # TODO: Implement this, returns 0 to avoid errors
+    # Sumar 1 a todos los numeros del candidato y modulo entre n_hour_day y si es 0 suma 1 dia
+    aux = solution.copy()
+    dias = 0
+    aux = [(val + 1) % 3 for val in aux]
+
+    for i in aux:
+        if i == 0:
+            dias += 1
+
+    return dias
 
 def calculate_p3(solution, *args, **kwargs):
     #dataset = kwargs['dataset']
     # Calcula el número de asignaturas con horas NO consecutivas en un mismo día
-    return 0 # TODO: Implement this, returns 0 to avoid errors
+    return None
 
 def fitness_timetabling(solution, *args, **kwargs):
     # Calcula el fitness de una solución de timetabling siguiendo la fórmula del enunciado
@@ -160,7 +160,6 @@ def fitness_timetabling(solution, *args, **kwargs):
 # - Una función que devuelva la tabla de horarios de una solución
 # - Una función que devuelva la cantidad de horas por día de cada asignatura
 # - A través de args y kwargs se pueden pasar argumentos adicionales que vayamos a necesitar
-
 fitness_timetabling(candidate, dataset=dataset) # Devuelve la fitness del candidato de ejemplo
 
 """## Operadores genéticos

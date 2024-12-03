@@ -60,14 +60,28 @@ print(my_other_list)
 """
 
 
+import pandas as pd
+
+list = [1, 1, 2, 3, 4, 5, 6]
 
 
-list = [1, 2, 3, 4, 5, 6]
+def calculate_c1(solution, *args, **kwargs):
+    # dataset = kwargs['dataset']
+    # Calcula la cantidad de asignaturas que se imparten en mismas franjas horarias
+    cont = 0
+    # Convertir a una Serie de Pandas
+    series = pd.Series(arr)
 
-for i in list:
-    print(i)
+    # Contar ocurrencias
+    counts = series.value_counts()
 
+    for i in counts:
+        if i > 0:
+            cont += i - 1
 
+    return cont
+
+print(calculate_c1(list))
 
 
 
