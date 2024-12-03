@@ -61,7 +61,7 @@ print(my_other_list)
 
 
 
-list = [0, 6, 8, 5, 3, 4]
+list = [0, 3, 8, 5, 3, 4]
 
 
 dataset = {"n_courses" : 3,
@@ -75,29 +75,23 @@ def calculate_c2(solution, *args, **kwargs):
     # de una misma asignatura en un mismo día
     # Dividir entre 3 y ver que numeros son iguales
 
-    # solution = [0 6 8 2 3 5]
-    # aux = [0 2 2 0 1 1]
     aux = [0] * len(solution)
     counter = 0
     courses = dataset['courses']
 
-
-
     for i in range(len(solution)):
         aux[i] = solution[i] // dataset['n_days']
 
-    #print(aux)
-
     i = 0
-    array = [0] * 3
+    n_days = dataset['n_days'] - 1
 
     for course in courses:
+        array = [0] * 3
         for _ in range(course[1]):
-            #print(_)
             array[aux[i]] += 1
             i += 1
-            #print(array)
-            counter = sum(1 if array[i] > 2 else 0 for i in range(_))
+            print(array)
+            counter = sum(array[i] - n_days if array[i] > 2 else 0 for i in range(_))
 
     return counter
 
