@@ -152,9 +152,21 @@ def calculate_p2(solution, *args, **kwargs):
     return dias
 
 def calculate_p3(solution, *args, **kwargs):
-    #dataset = kwargs['dataset']
+    # dataset = kwargs['dataset']
     # Calcula el número de asignaturas con horas NO consecutivas en un mismo día
-    return None
+
+    counter = 0
+    courses = dataset["courses"]
+    i = 0
+
+    for course in courses:
+        if course[1] >= 2:
+            arr = solution[i : i + course[1]].copy()
+            arr = np.sort(arr)
+            counter += sum(1 if (arr[k + 1] - arr[k]) == 2 else 0 for k in range(len(arr) - 1))
+        i += course[1]
+
+    return counter
 
 def fitness_timetabling(solution, *args, **kwargs):
     # Calcula el fitness de una solución de timetabling siguiendo la fórmula del enunciado
