@@ -151,19 +151,19 @@ def calculate_p1(solution, *args, **kwargs):
 
 
 def calculate_p2(solution, *args, **kwargs):
-    """
-    Devuelve el número de días utilizados en los horarios
-    Sumar 1 a todos los numeros del candidato y modulo entre n_hour_day y si es 0 suma 1 dia
-    """
+    # Calcula el número de días utilizados en los horarios
+    # modulo entre n_hour_day y si es 0 suma 1 dia
     aux = solution.copy()
     dias = 0
-    aux = [(val + 1) % dataset['n_days'] for val in aux]
+    aux = [(val) % dataset['n_days'] for val in aux]
+    arr = [0] * dataset['n_days']
 
     for i in aux:
-        if i == 0:
-            dias += 1
+        arr[i] += 1
 
-    return dias
+    counter = sum(1 if arr[k] > 0 else 0 for k in range(len(arr)))
+
+    return counter
 
 
 def calculate_p3(solution, *args, **kwargs):
