@@ -4,10 +4,11 @@ import pandas as pd
 """## Representación"""
 
 # Ejemplo de dataset de entrada para el problema de asignación de horarios
-dataset = {"n_courses" : 3,
-           "n_days" : 3,
-           "n_hours_day" : 3,
-           "courses" : [("IA", 1), ("ALG", 2), ("BD", 3)]}
+dataset = {"n_courses": 3,
+           "n_days": 3,
+           "n_hours_day": 3,
+           "courses": [("IA", 1), ("ALG", 2), ("BD", 3)]}
+
 
 def generate_random_array_int(alphabet, length):
     """
@@ -15,6 +16,7 @@ def generate_random_array_int(alphabet, length):
     usando el alfabeto dado
     """
     return np.random.choice(alphabet, length)
+
 
 def generate_initial_population_timetabling(pop_size, *args, **kwargs):
     """Genera una población inicial de tamaño pop_size"""
@@ -34,8 +36,10 @@ def generate_initial_population_timetabling(pop_size, *args, **kwargs):
 
     return initial_population
 
+
 generate_random_array_int(list(range(9)), 6)
 print(generate_initial_population_timetabling(6)[0])
+
 
 ################################# NO TOCAR #################################
 #                                                                          #
@@ -50,7 +54,7 @@ def print_timetabling_solution(solution, dataset):
 
     # Llena la matriz con las asignaturas
     i = 0
-    max_len = 6 # Longitud del título Día XX
+    max_len = 6  # Longitud del título Día XX
     for course in courses:
         for _ in range(course[1]):
             day = solution[i] // n_hours_day
@@ -64,18 +68,20 @@ def print_timetabling_solution(solution, dataset):
     # Imprime la matriz con formato de tabla markdown
     print('|         |', end='')
     for i in range(n_days):
-        print(f' Día {i+1:<2}{" "*(max_len-6)} |', end='')
+        print(f' Día {i + 1:<2}{" " * (max_len - 6)} |', end='')
     print()
     print('|---------|', end='')
     for i in range(n_days):
-        print(f'-{"-"*max_len}-|', end='')
+        print(f'-{"-" * max_len}-|', end='')
     print()
     for j in range(n_hours_day):
-        print(f'| Hora {j+1:<2} |', end='')
+        print(f'| Hora {j + 1:<2} |', end='')
         for i in range(n_days):
             s = '/'.join(timetable[i][j])
-            print(f' {s}{" "*(max_len-len(s))}', end=' |')
+            print(f' {s}{" " * (max_len - len(s))}', end=' |')
         print()
+
+
 #                                                                          #
 ################################# NO TOCAR #################################
 
@@ -85,6 +91,7 @@ print(candidate)
 print_timetabling_solution(candidate, dataset)
 
 """## Función de fitness"""
+
 
 def calculate_c1(solution, *args, **kwargs):
     """Devuelve la cantidad de asignaturas que se imparten en mismas franjas horarias"""
@@ -100,6 +107,7 @@ def calculate_c1(solution, *args, **kwargs):
             cont += (i - 1)
 
     return cont
+
 
 def calculate_c2(solution, *args, **kwargs):
     """
@@ -127,9 +135,10 @@ def calculate_c2(solution, *args, **kwargs):
 
     return counter
 
+
 def calculate_p1(solution, *args, **kwargs):
     """"Devuelve el número de huecos vacíos entre asignaturas"""
-    counter  = 0
+    counter = 0
     n_days = dataset['n_days']
 
     for i in range(len(solution) - 1):
@@ -139,6 +148,7 @@ def calculate_p1(solution, *args, **kwargs):
             counter += 1
 
     return counter
+
 
 def calculate_p2(solution, *args, **kwargs):
     """
@@ -155,50 +165,58 @@ def calculate_p2(solution, *args, **kwargs):
 
     return dias
 
+
 def calculate_p3(solution, *args, **kwargs):
-    """Devuelve el número de asignaturas con horas NO consecutivas en un mismo día"""
+    # Calcula el número de asignaturas con horas NO consecutivas en un mismo día
 
     counter = 0
     courses = dataset["courses"]
+    n_days = dataset["n_days"]
     i = 0
 
     for course in courses:
         if course[1] >= 2:
-            arr = solution[i : i + course[1]].copy()
+            arr = solution[i: i + course[1]].copy()
             arr = np.sort(arr)
-            counter += sum(1 if (arr[k + 1] - arr[k]) == 2 else 0 for k in range(len(arr) - 1))
+            counter += sum(1 if arr[k + 1] % n_days == arr[k] % n_days and (arr[k + 1] - arr[k]) == 2 else 0 for k in
+                           range(len(arr) - 1))
         i += course[1]
 
     return counter
 
+
 def fitness_timetabling(solution, *args, **kwargs):
     """Devuelve el fitness de una solución de timetabling siguiendo la fórmula del enunciado"""
     if calculate_c1(solution) > 0 or calculate_c2(solution) > 0:
-      return 0
+        return 0
     else:
-      return 1 / (1 + calculate_p1(solution) + calculate_p2(solution) + calculate_p3(solution))
+        return 1 / (1 + calculate_p1(solution) + calculate_p2(solution) + calculate_p3(solution))
+
 
 # Pistas:
 # - Una función que devuelva la tabla de horarios de una solución
 # - Una función que devuelva la cantidad de horas por día de cada asignatura
 # - A través de args y kwargs se pueden pasar argumentos adicionales que vayamos a necesitar
-fitness_timetabling(candidate, dataset=dataset) # Devuelve la fitness del candidato de ejemplo
+fitness_timetabling(candidate, dataset=dataset)  # Devuelve la fitness del candidato de ejemplo
 
 """# Operadores genéticos"""
 
 """## Selección por torneo"""
+
+
 def select_best(fitness_of_candidates, *args, **kwargs):
     """Devuelve una lista con los mejores candidatos"""
     i = 0
     best_candidates = []
     if len(fitness_of_candidates) % 2 == 0:
-      while i < (len(fitness_of_candidates) - 1):
-        if max(fitness_of_candidates[i][1], fitness_of_candidates[i + 1][1]) == fitness_of_candidates[i]:
-          best_candidates.append(fitness_of_candidates[i])
-        else:
-          best_candidates.append(fitness_of_candidates[i + 1])
-        i += 2
+        while i < (len(fitness_of_candidates) - 1):
+            if max(fitness_of_candidates[i][1], fitness_of_candidates[i + 1][1]) == fitness_of_candidates[i]:
+                best_candidates.append(fitness_of_candidates[i])
+            else:
+                best_candidates.append(fitness_of_candidates[i + 1])
+            i += 2
     return best_candidates
+
 
 def tournament_selection(population, fitness, number_parents, *args, **kwargs):
     # Pista:
@@ -219,56 +237,71 @@ def tournament_selection(population, fitness, number_parents, *args, **kwargs):
     # Elige los predecesores con el number_parents
     i = 0
     while i < number_parents:
-      t.append(initial_population[index])
-      i += 1
+        t.append(initial_population[index])
+        i += 1
 
     # Calcula la fitness de los elegidos para el torneo
     fitness_of_candidates = []
     for i in t:
-      fitness_of_candidates.append(((i, fitness_timetabling(i))))
+        fitness_of_candidates.append(((i, fitness_timetabling(i))))
 
     # Elige de dos en dos el mejor por la fitness
-    the_best_ones =[].append(select_best(fitness_of_candidates))
+    the_best_ones = [].append(select_best(fitness_of_candidates))
 
     return the_best_ones
+
 
 tournament_selection(generate_initial_population_timetabling, fitness_timetabling, 4)
 
 """## Cruce de un punto"""
+
+
 def one_point_crossover(parent1, parent2, p_cross, *args, **kwargs):
     # Realiza el cruce de dos padres con una probabilidad p_cross
     return None, None
 
+
 """## Mutación uniforme"""
+
+
 def uniform_mutation(chromosome, p_mut, *args, **kwargs):
-    dataset = kwargs['dataset'] # Dataset con la misma estructura que el ejemplo
+    dataset = kwargs['dataset']  # Dataset con la misma estructura que el ejemplo
     # Realiza la mutación gen a gen con una probabilidad p_mut
     # Obtener el alfabeto del dataset para aplicar la mutación
     return None
 
+
 """## Selección ambiental (reemplazo generacional)"""
+
+
 def generational_replacement(population, fitness, offspring, fitness_offspring, *args, **kwargs):
     # Realiza la sustitución generacional de la población
     # Debe devolver tanto la nueva población como el fitness de la misma
     return None, None
 
+
 """# Algoritmo genético"""
 
 """## Condición de parada (número de generaciones)"""
+
+
 def generation_stop(generation, fitness, *args, **kwargs):
-    max_gen=kwargs['max_gen']
+    max_gen = kwargs['max_gen']
     # Comprueba si se cumple el criterio de parada (máximo número de generaciones)
     return None
 
+
 """## Algoritmo genético"""
+
+
 def genetic_algorithm(generate_population, pop_size, fitness_function, stopping_criteria, offspring_size,
                       selection, crossover, p_cross, mutation, p_mut, environmental_selection, *args, **kwargs):
     # Aplica un algoritmo genético a un problema de maximización
-    population = None # Crea la población de individuos de tamaño pop_size
-    fitness = None # Contiene la evaluación de la población
-    best_fitness = [] # Guarda el mejor fitness de cada generación
-    mean_fitness = [] # Guarda el fitness medio de cada generación
-    generation = 0 # Contador de generaciones
+    population = None  # Crea la población de individuos de tamaño pop_size
+    fitness = None  # Contiene la evaluación de la población
+    best_fitness = []  # Guarda el mejor fitness de cada generación
+    mean_fitness = []  # Guarda el fitness medio de cada generación
+    generation = 0  # Contador de generaciones
 
     # 1 - Inicializa la población con la función generate_population
     # 2 - Evalúa la población con la función fitness_function
